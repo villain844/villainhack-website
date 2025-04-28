@@ -3,54 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>⚠️ Warning ⚠️</title>
+  <title>Villain Hack</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: monospace;
+      font-family: 'Courier New', Courier, monospace;
     }
     body {
       background: black;
-      color: red;
       overflow: hidden;
-      height: 100vh;
-      width: 100vw;
-      position: relative;
+      color: red;
       text-align: center;
     }
     canvas {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 0;
     }
     .content {
       position: relative;
       z-index: 2;
-      top: 30%;
-      transform: translateY(-30%);
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: rgba(0,0,0,0.7);
     }
     #countdown {
-      font-size: 4rem;
+      font-size: 5rem;
+      font-weight: bold;
       color: red;
       text-shadow: 0 0 20px red;
-      font-weight: bold;
-      animation: glow 1s infinite alternate;
+      animation: pulse 1s infinite;
+      margin-bottom: 20px;
     }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px red; }
-      to { text-shadow: 0 0 20px red; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
-    .locked {
-      font-size: 3rem;
-      color: red;
-      text-shadow: 0 0 10px red;
-      margin-top: 20px;
-      animation: shake 0.5s infinite;
+    #locked {
       display: none;
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 50px 0;
+      animation: shake 0.5s infinite;
+      color: white;
+      text-shadow: 0 0 10px red;
     }
     @keyframes shake {
       0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -65,82 +74,130 @@
       90% { transform: translate(1px, 2px) rotate(0deg); }
       100% { transform: translate(1px, -2px) rotate(-1deg); }
     }
-    .contact-button {
-      display: none;
-      margin-top: 30px;
-      padding: 15px 30px;
-      font-size: 1.2rem;
+    .button {
+      background: black;
       color: white;
-      background: red;
-      border: 2px solid white;
-      border-radius: 50px;
+      border: 2px solid red;
+      padding: 10px 20px;
+      font-size: 1.2rem;
       text-decoration: none;
-      box-shadow: 0 0 20px red;
-      animation: blink 1.5s infinite;
+      border-radius: 50px;
+      box-shadow: 0 0 10px red, inset 0 0 10px red;
+      transition: 0.3s;
+      margin-bottom: 50px;
     }
-    @keyframes blink {
-      0%, 100% { box-shadow: 0 0 10px red; }
-      50% { box-shadow: 0 0 30px red; }
+    .button:hover {
+      background: red;
+      color: black;
+      box-shadow: 0 0 20px red, inset 0 0 20px red;
+    }
+    #playButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      border: 2px solid red;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 0 10px red;
+    }
+    #glass {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://static.vecteezy.com/system/resources/thumbnails/012/042/923/small/broken-glass-texture-overlay-png.png') no-repeat center center;
+      background-size: cover;
+      z-index: 5;
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
-  <canvas id="matrix"></canvas>
-  <div class="content">
-    <div id="countdown">10</div>
-    <div class="locked">🔒 DEVICE LOCKED! 🔒</div>
-    <a href="https://wa.me/6281246041489" class="contact-button" target="_blank">𝚌𝚘𝚗𝚝𝚊𝚌𝚝 𝚍𝚎𝚟𝚎𝚕𝚘𝚙𝚎𝚛</a>
-  </div>
 
-  <script>
-    // Matrix rain effect
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-    const letters = "アァイィウエエオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array.from({length: columns}).fill(1);
+<canvas id="matrix"></canvas>
 
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px monospace";
-      for(let i = 0; i < drops.length; i++) {
-        const text = letters.charAt(Math.floor(Math.random() * letters.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
+<div class="content" id="mainContent">
+  <h1>Villain Hack Incoming...</h1>
+  <div id="countdown">10</div>
+</div>
+
+<div id="locked">
+  <h1 style="margin-top: 100px;">🔒 DEVICE LOCKED 🔒</h1>
+  <a class="button" href="https://wa.me/6281246041489" target="_blank" onclick="playTing()">𝚌𝚘𝚗𝚝𝚊𝚌𝚝 𝚍𝚎𝚟𝚎𝚕𝚘𝚙𝚎𝚛</a>
+</div>
+
+<div id="glass"></div>
+
+<div id="playButton" onclick="playMusic()">▶️</div>
+
+<audio id="bgMusic" src="https://files.catbox.moe/neglqx.mp3" loop></audio>
+<audio id="ting" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_dcb8fa425e.mp3?filename=notification-ting-6832.mp3"></audio>
+
+<script>
+  // Matrix Effect
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const fontSize = 14;
+  const columns = canvas.width / fontSize;
+  const drops = [];
+  for (let i = 0; i < columns; i++) {
+    drops[i] = Math.random() * canvas.height;
+  }
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0F0";
+    ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
       }
+      drops[i]++;
     }
-    setInterval(draw, 33);
+  }
+  setInterval(drawMatrix, 33);
 
-    // Countdown timer
-    let seconds = 10;
-    const countdownEl = document.getElementById('countdown');
-    const lockedEl = document.querySelector('.locked');
-    const buttonEl = document.querySelector('.contact-button');
+  // Countdown Timer
+  let seconds = 10;
+  const countdown = document.getElementById("countdown");
+  const mainContent = document.getElementById("mainContent");
+  const locked = document.getElementById("locked");
+  const glass = document.getElementById("glass");
 
-    const timer = setInterval(() => {
-      seconds--;
-      countdownEl.textContent = seconds;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        countdownEl.style.display = "none";
-        lockedEl.style.display = "block";
-        buttonEl.style.display = "inline-block";
-      }
-    }, 1000);
+  const timer = setInterval(() => {
+    seconds--;
+    countdown.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      mainContent.style.display = "none";
+      glass.style.display = "block";
+      locked.style.display = "flex";
+    }
+  }, 1000);
 
-    // Resize canvas when window resizes
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  </script>
+  // Music
+  const bgMusic = document.getElementById("bgMusic");
+  function playMusic() {
+    bgMusic.play();
+  }
+
+  // Ting Sound
+  function playTing() {
+    document.getElementById("ting").play();
+  }
+</script>
+
 </body>
 </html>
