@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>⚠️ Warning ⚠️</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: monospace;
+    }
+    body {
+      background: black;
+      color: red;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      text-align: center;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+      top: 30%;
+      transform: translateY(-30%);
+      padding: 20px;
+    }
+    #countdown {
+      font-size: 4rem;
+      color: red;
+      text-shadow: 0 0 20px red;
+      font-weight: bold;
+      animation: glow 1s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px red; }
+      to { text-shadow: 0 0 20px red; }
+    }
+    .locked {
+      font-size: 3rem;
+      color: red;
+      text-shadow: 0 0 10px red;
+      margin-top: 20px;
+      animation: shake 0.5s infinite;
+      display: none;
+    }
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+    .contact-button {
+      display: none;
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      color: white;
+      background: red;
+      border: 2px solid white;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 0 20px red;
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { box-shadow: 0 0 10px red; }
+      50% { box-shadow: 0 0 30px red; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="content">
+    <div id="countdown">10</div>
+    <div class="locked">🔒 DEVICE LOCKED! 🔒</div>
+    <a href="https://wa.me/6281246041489" class="contact-button" target="_blank">𝚌𝚘𝚗𝚝𝚊𝚌𝚝 𝚍𝚎𝚟𝚎𝚕𝚘𝚙𝚎𝚛</a>
+  </div>
+
+  <script>
+    // Matrix rain effect
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = "アァイィウエエオカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({length: columns}).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+      for(let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 33);
+
+    // Countdown timer
+    let seconds = 10;
+    const countdownEl = document.getElementById('countdown');
+    const lockedEl = document.querySelector('.locked');
+    const buttonEl = document.querySelector('.contact-button');
+
+    const timer = setInterval(() => {
+      seconds--;
+      countdownEl.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        countdownEl.style.display = "none";
+        lockedEl.style.display = "block";
+        buttonEl.style.display = "inline-block";
+      }
+    }, 1000);
+
+    // Resize canvas when window resizes
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
