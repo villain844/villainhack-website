@@ -2,166 +2,152 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Villain Hack</title>
   <style>
-    * {
+    body, html {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Courier New', Courier, monospace;
-    }
-    body {
-      background: black;
+      height: 100%;
       overflow: hidden;
+      background: black;
       color: red;
-      text-align: center;
+      font-family: monospace;
+      position: relative;
+      transition: background 2s ease-in-out;
     }
     canvas {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-    .content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: rgba(0,0,0,0.7);
     }
     #countdown {
-      font-size: 5rem;
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 80px;
       font-weight: bold;
-      color: red;
-      text-shadow: 0 0 20px red;
-      animation: pulse 1s infinite;
-      margin-bottom: 20px;
+      text-shadow: 0 0 10px red, 0 0 20px red, 0 0 30px red;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    #locked {
-      display: none;
-      position: relative;
-      z-index: 10;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 50px 0;
-      animation: shake 0.5s infinite;
+    #lockedText {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 50px;
+      font-weight: bold;
       color: white;
-      text-shadow: 0 0 10px red;
+      display: none;
+      animation: shake 0.5s infinite;
+      text-shadow: 0 0 5px red, 0 0 10px red;
     }
     @keyframes shake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      20% { transform: translate(-3px, 0px) rotate(1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      40% { transform: translate(1px, -1px) rotate(1deg); }
-      50% { transform: translate(-1px, 2px) rotate(-1deg); }
-      60% { transform: translate(-3px, 1px) rotate(0deg); }
-      70% { transform: translate(3px, 1px) rotate(-1deg); }
-      80% { transform: translate(-1px, -1px) rotate(1deg); }
-      90% { transform: translate(1px, 2px) rotate(0deg); }
-      100% { transform: translate(1px, -2px) rotate(-1deg); }
+      0% { transform: translate(1px, 1px); }
+      25% { transform: translate(-1px, -2px); }
+      50% { transform: translate(-3px, 0px); }
+      75% { transform: translate(3px, 2px); }
+      100% { transform: translate(1px, -1px); }
     }
-    .button {
-      background: black;
-      color: white;
-      border: 2px solid red;
-      padding: 10px 20px;
-      font-size: 1.2rem;
-      text-decoration: none;
+    #contactButton {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 30px;
+      border: 3px solid red;
       border-radius: 50px;
-      box-shadow: 0 0 10px red, inset 0 0 10px red;
+      background: black;
+      color: red;
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 0 0 5px red;
+      cursor: pointer;
+      box-shadow: 0 0 20px red;
       transition: 0.3s;
-      margin-bottom: 50px;
     }
-    .button:hover {
+    #contactButton:hover {
       background: red;
       color: black;
-      box-shadow: 0 0 20px red, inset 0 0 20px red;
+      text-shadow: none;
     }
     #playButton {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      border: 2px solid red;
-      padding: 10px;
+      width: 60px;
+      height: 60px;
+      background: rgba(255,0,0,0.8);
       border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 30px;
       cursor: pointer;
-      z-index: 10;
-      box-shadow: 0 0 10px red;
+      box-shadow: 0 0 10px red, 0 0 20px red;
     }
-    #glass {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
+    #lyrics {
+      position: absolute;
+      bottom: 100px;
       width: 100%;
-      height: 100%;
-      background: url('https://static.vecteezy.com/system/resources/thumbnails/012/042/923/small/broken-glass-texture-overlay-png.png') no-repeat center center;
-      background-size: cover;
-      z-index: 5;
-      opacity: 0.8;
+      text-align: center;
+      font-size: 24px;
+      color: white;
+      display: none;
+      text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+      animation: moveUp 30s linear infinite;
+    }
+    @keyframes moveUp {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(-200%); }
     }
   </style>
 </head>
 <body>
 
 <canvas id="matrix"></canvas>
-
-<div class="content" id="mainContent">
-  <h1>Villain Hack Incoming...</h1>
-  <div id="countdown">10</div>
+<div id="countdown">10</div>
+<div id="lockedText">Device Locked</div>
+<div id="lyrics">
+  Kembali pulang membawa semua rasa<br>
+  Yang pernah hilang ditelan masa<br>
+  Kembali pulang, melintasi waktu<br>
+  Mencari arti yang telah lama berlalu...
 </div>
+<button id="contactButton">𝚌𝚘𝚗𝚝𝚊𝚌𝚝 𝚍𝚎𝚟𝚎𝚕𝚘𝚙𝚎𝚛</button>
+<div id="playButton">▶</div>
 
-<div id="locked">
-  <h1 style="margin-top: 100px;">🔒 DEVICE LOCKED 🔒</h1>
-  <a class="button" href="https://wa.me/6281246041489" target="_blank" onclick="playTing()">𝚌𝚘𝚗𝚝𝚊𝚌𝚝 𝚍𝚎𝚟𝚎𝚕𝚘𝚙𝚎𝚛</a>
-</div>
-
-<div id="glass"></div>
-
-<div id="playButton" onclick="playMusic()">▶️</div>
-
-<audio id="bgMusic" src="https://files.catbox.moe/crf7up.mp3" loop></audio>
-<audio id="ting" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_dcb8fa425e.mp3?filename=notification-ting-6832.mp3"></audio>
+<audio id="bgMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
+<audio id="tingSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_9c31a5b68f.mp3" preload="auto"></audio>
 
 <script>
   // Matrix Effect
-  const canvas = document.getElementById("matrix");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
   canvas.height = window.innerHeight;
   canvas.width = window.innerWidth;
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const fontSize = 14;
+  const katakana = 'アカサタナハマヤラワイキシチニヒミリウクスツヌフムユルエケセテネヘメレオコソトノホモヨロゴゾドボポヴッン';
+  const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const nums = '0123456789';
+  const alphabet = katakana + latin + nums;
+  const fontSize = 16;
   const columns = canvas.width / fontSize;
   const drops = [];
-  for (let i = 0; i < columns; i++) {
-    drops[i] = Math.random() * canvas.height;
+  for(let x = 0; x < columns; x++) {
+    drops[x] = Math.random() * canvas.height;
   }
 
+  let drawMatrixActive = true;
   function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    if (!drawMatrixActive) return;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0F0";
-    ctx.font = fontSize + "px monospace";
-    for (let i = 0; i < drops.length; i++) {
-      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    for(let i = 0; i < drops.length; i++) {
+      const text = alphabet[Math.floor(Math.random() * alphabet.length)];
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
         drops[i] = 0;
       }
       drops[i]++;
@@ -169,34 +155,49 @@
   }
   setInterval(drawMatrix, 33);
 
-  // Countdown Timer
-  let seconds = 10;
-  const countdown = document.getElementById("countdown");
-  const mainContent = document.getElementById("mainContent");
-  const locked = document.getElementById("locked");
-  const glass = document.getElementById("glass");
+  // Countdown
+  let count = 10;
+  const countdown = document.getElementById('countdown');
+  const lockedText = document.getElementById('lockedText');
+  const lyrics = document.getElementById('lyrics');
 
   const timer = setInterval(() => {
-    seconds--;
-    countdown.textContent = seconds;
-    if (seconds <= 0) {
+    count--;
+    countdown.textContent = count;
+    if (count <= 0) {
       clearInterval(timer);
-      mainContent.style.display = "none";
-      glass.style.display = "block";
-      locked.style.display = "flex";
+      // Hentikan matrix
+      drawMatrixActive = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Ganti background ke gambar kaca retak custom
+      document.body.style.backgroundImage = 'url("https://files.catbox.moe/ja69nh.jpg")';
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      // Hilangkan countdown & locked text
+      countdown.style.display = 'none';
+      lockedText.style.display = 'none';
+      // Munculkan lirik
+      lyrics.style.display = 'block';
     }
   }, 1000);
 
-  // Music
-  const bgMusic = document.getElementById("bgMusic");
-  function playMusic() {
+  // Play Music
+  const bgMusic = document.getElementById('bgMusic');
+  const playButton = document.getElementById('playButton');
+  playButton.addEventListener('click', () => {
     bgMusic.play();
-  }
+    playButton.style.display = 'none';
+  });
 
-  // Ting Sound
-  function playTing() {
-    document.getElementById("ting").play();
-  }
+  // Ting sound when contact button clicked
+  const tingSound = document.getElementById('tingSound');
+  const contactButton = document.getElementById('contactButton');
+  contactButton.addEventListener('click', () => {
+    tingSound.play();
+    setTimeout(() => {
+      window.location.href = 'https://wa.me/6281246041489';
+    }, 500);
+  });
 </script>
 
 </body>
