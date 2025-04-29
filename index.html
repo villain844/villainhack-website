@@ -5,27 +5,50 @@
   <title>Villain Hack Website</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Basic Reset */
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       background: black;
+      overflow: hidden;
       font-family: Arial, sans-serif;
     }
-    
-    /* Matrix Rain */
+
     canvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1;
-      background: black;
+      z-index: 0;
     }
-    
-    /* Loading Section */
+
+    /* VCard */
+    .vcard {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      text-align: center;
+      color: white;
+    }
+
+    .vcard p {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .start-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 2px solid red;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 10px red;
+    }
+
+    /* Loading Bar */
     .loading-container {
       position: absolute;
       top: 50%;
@@ -37,21 +60,22 @@
       border: 2px solid red;
       box-shadow: 0 0 15px red;
       overflow: hidden;
-      z-index: 2;
+      z-index: 3;
+      display: none;
     }
-    
+
     .loading-bar {
       height: 100%;
       width: 0%;
       background: linear-gradient(to right, #ff0000, #ff5555, #ff0000);
       animation: loading 30s linear forwards;
     }
-    
+
     @keyframes loading {
       0% { width: 0%; }
       100% { width: 100%; }
     }
-    
+
     .loading-text {
       position: absolute;
       width: 100%;
@@ -60,36 +84,33 @@
       font-size: 24px;
       color: red;
       text-shadow: 0 0 5px red;
-      z-index: 2;
-    }
-    
-    /* Start Card */
-    .start-card {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
       z-index: 3;
       display: none;
     }
 
-    .start-card p {
-      font-size: 20px;
-      color: white;
-      margin-bottom: 20px;
+    /* Aura effect */
+    .aura-effect {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      height: 50px;
+      border-radius: 10px;
+      z-index: 2;
+      pointer-events: none;
+      animation: auraPulse 1.5s infinite ease-in-out;
+      background: radial-gradient(circle, rgba(255,0,0,0.4) 0%, rgba(255,0,0,0) 70%);
+      filter: blur(10px);
+      display: none;
     }
 
-    .start-button {
-      padding: 10px 20px;
-      background: transparent;
-      color: white;
-      border: 2px solid red;
-      box-shadow: 0 0 10px red;
-      font-size: 18px;
-      cursor: pointer;
+    @keyframes auraPulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
     }
-    
+
     /* After loading background */
     .background-after {
       position: absolute;
@@ -98,83 +119,85 @@
       background: url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center/cover;
       opacity: 0;
       transition: opacity 3s ease;
-      z-index: 0;
+      z-index: 1;
     }
+
   </style>
 </head>
 <body>
 
 <canvas id="matrixCanvas"></canvas>
 
+<!-- VCard -->
+<div class="vcard" id="vcard">
+  <p>SELAMAT DATANG DI WEB ➩ 𓆩⟬villain host⟭𓆪</p>
+  <button class="start-btn" onclick="startLoading()">Start</button>
+</div>
+
+<!-- Loading Aura & Bar -->
+<div class="aura-effect" id="auraEffect"></div>
 <div class="loading-container" id="loadingContainer">
   <div class="loading-bar" id="loadingBar"></div>
 </div>
 <div class="loading-text" id="loadingText">1%</div>
 
-<div class="start-card" id="startCard">
-  <p>SELAMAT DATANG DI WEB VILLAIN HOSTING</p>
-  <button class="start-button" onclick="startWebsite()">Start</button>
-</div>
-
+<!-- Background After Loading -->
 <div class="background-after" id="backgroundAfter"></div>
 
 <audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
 
 <script>
 /* Matrix Rain */
-var c = document.getElementById("matrixCanvas");
-var ctx = c.getContext("2d");
+const canvas = document.getElementById("matrixCanvas");
+const ctx = canvas.getContext("2d");
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
 
-c.height = window.innerHeight;
-c.width = window.innerWidth;
+const matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
+const font_size = 16;
+const columns = canvas.width / font_size;
+let drops = [];
+for (let x = 0; x < columns; x++) {
+  drops[x] = Math.random() * -100; // acak agar tidak bersamaan
+}
 
-var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-matrix = matrix.split("");
-
-var font_size = 16;
-var columns = c.width / font_size;
-var drops = [];
-for(var x = 0; x < columns; x++)
-  drops[x] = Math.random() * c.height;
-
-function draw() {
+function drawMatrix() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-  ctx.fillRect(0, 0, c.width, c.height);
-
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#0F0";
-  ctx.font = font_size + "px arial";
-  for(var i = 0; i < drops.length; i++) {
-    var text = matrix[Math.floor(Math.random() * matrix.length)];
+  ctx.font = font_size + "px Arial";
+  for (let i = 0; i < drops.length; i++) {
+    const text = matrix[Math.floor(Math.random() * matrix.length)];
     ctx.fillText(text, i * font_size, drops[i] * font_size);
-
-    if (drops[i] * font_size > c.height && Math.random() > 0.975)
+    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
-
+    }
     drops[i]++;
   }
 }
-setInterval(draw, 35);
+setInterval(drawMatrix, 35);
 
-/* Loading Percentage */
-let loadingText = document.getElementById('loadingText');
-let percentage = 1;
-let interval = setInterval(() => {
+/* Start Loading */
+function startLoading() {
+  document.getElementById('vcard').style.display = 'none';
+  document.getElementById('loadingContainer').style.display = 'block';
+  document.getElementById('loadingText').style.display = 'block';
+  document.getElementById('auraEffect').style.display = 'block';
+
+  let percentage = 1;
+  const loadingText = document.getElementById('loadingText');
+  const interval = setInterval(() => {
     percentage++;
     loadingText.textContent = percentage + "%";
-
     if (percentage >= 100) {
-        clearInterval(interval);
-        document.getElementById('loadingContainer').style.display = 'none';
-        document.getElementById('loadingText').style.display = 'none';
-        document.getElementById('startCard').style.display = 'block';
+      clearInterval(interval);
+      document.getElementById('loadingContainer').style.display = 'none';
+      document.getElementById('loadingText').style.display = 'none';
+      document.getElementById('auraEffect').style.display = 'none';
+      document.getElementById('backgroundAfter').style.opacity = '1';
+      document.getElementById('backgroundMusic').play();
     }
-}, 300);
-
-/* Start Website */
-function startWebsite() {
-  document.getElementById('startCard').style.display = 'none';
-  document.getElementById('backgroundAfter').style.opacity = '1';
-  document.getElementById('backgroundMusic').play();
+  }, 300);
 }
 </script>
 
