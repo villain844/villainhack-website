@@ -2,163 +2,169 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Villain Hack Website</title>
+  <title>Villain Hack Loading</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: black;
-      font-family: 'Courier New', Courier, monospace;
+    html, body {
+      margin: 0; padding: 0; overflow: hidden;
+      background: black; height: 100%;
+      font-family: 'Courier New', monospace;
       color: #00ff00;
-      height: 100%;
     }
     #vcard {
-      position: absolute;
-      top: 50%;
-      left: 50%;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      text-align: center;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 20px;
-      border: 2px solid #00ff00;
-      border-radius: 10px;
+      background: rgba(0,0,0,0.7);
+      padding: 20px; border: 2px solid #00ff00;
+      border-radius: 10px; text-align: center;
       box-shadow: 0 0 20px #00ff00;
       font-family: Arial, sans-serif;
+      z-index: 2;
     }
     #startButton {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 20px;
-      background: black;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.3s;
+      margin-top: 20px; padding: 10px 20px;
+      font-size: 20px; background: black;
+      color: #00ff00; border: 2px solid #00ff00;
+      border-radius: 5px; cursor: pointer;
+      transition: .3s;
     }
     #startButton:hover {
-      background: #00ff00;
-      color: black;
+      background: #00ff00; color: black;
     }
     #countdown {
-      position: absolute;
-      top: 50%;
-      left: 50%;
+      position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 80px;
-      color: red;
-      display: none;
+      font-size: 80px; color: red;
       text-shadow: 0 0 10px red, 0 0 20px red;
+      display: none; z-index: 2;
     }
     #matrixCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
+      position: absolute; top: 0; left: 0; z-index: 0;
     }
     #backgroundImage {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: none;
       z-index: -1;
+    }
+    /* Progress bar container */
+    #progressContainer {
+      position: absolute; top: 60%; left: 0;
+      width: 100%; height: 6px;
+      overflow: hidden; display: none;
+      z-index: 2;
+    }
+    /* Diagonal glowing bar */
+    #progressBar {
+      position: absolute; top: 0; left: 0;
+      height: 100%; width: 0;
+      background: red;
+      box-shadow: 0 0 8px red, 0 0 16px red;
+      transform: skewX(-30deg);
+      transform-origin: left;
     }
   </style>
 </head>
 <body>
 
+  <!-- VCard & Start -->
   <div id="vcard">
-    <div style="font-size: 24px; margin-bottom: 10px;">
+    <div style="font-size:24px; margin-bottom:10px;">
       Lanjutkan ke Website Villain Host
     </div>
     <button id="startButton">Start</button>
   </div>
 
+  <!-- Matrix Rain Canvas -->
   <canvas id="matrixCanvas"></canvas>
-  <div id="countdown">10</div>
+
+  <!-- Persentase Countdown -->
+  <div id="countdown">1%</div>
+
+  <!-- Progress Bar -->
+  <div id="progressContainer">
+    <div id="progressBar"></div>
+  </div>
+
+  <!-- Background Ganti -->
   <img id="backgroundImage" src="https://files.catbox.moe/ja69nh.jpg">
 
+  <!-- Musik Latar -->
   <audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3"></audio>
 
   <script>
     const startButton     = document.getElementById('startButton');
     const vcard           = document.getElementById('vcard');
     const countdown       = document.getElementById('countdown');
-    const canvas          = document.getElementById('matrixCanvas');
-    const ctx             = canvas.getContext('2d');
+    const matrixCanvas    = document.getElementById('matrixCanvas');
+    const ctx             = matrixCanvas.getContext('2d');
     const backgroundMusic = document.getElementById('backgroundMusic');
     const backgroundImage = document.getElementById('backgroundImage');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar       = document.getElementById('progressBar');
 
-    let countdownTime = 10;
-    let matrixAnimation;
-    let countdownInterval;
+    let drops = [], animationRunning = true, matrixInterval, percentInterval;
 
-    // tiap kolom punya posisi Y dan kecepatan random
-    let drops = [];
     function initMatrix() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
+      matrixCanvas.width  = window.innerWidth;
+      matrixCanvas.height = window.innerHeight;
       const fontSize = 16;
-      const columns  = Math.floor(canvas.width / fontSize);
+      const cols     = Math.floor(matrixCanvas.width / fontSize);
       drops = [];
-      for (let i = 0; i < columns; i++) {
+      for (let i = 0; i < cols; i++) {
         drops.push({
-          y: Math.random() * canvas.height / fontSize,
-          speed: Math.random() * 1.5 + 0.5  // kecepatan 0.5–2.0
+          y: Math.random() * (matrixCanvas.height / fontSize),
+          speed: Math.random() * 1.5 + 0.5
         });
       }
       ctx.font = fontSize + 'px monospace';
     }
 
     function drawMatrix() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (!animationRunning) return;
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0,0,matrixCanvas.width,matrixCanvas.height);
       ctx.fillStyle = '#0F0';
       const fontSize = 16;
-
-      for (let i = 0; i < drops.length; i++) {
+      drops.forEach((drop, i) => {
         const x = i * fontSize;
-        const y = drops[i].y * fontSize;
-        const charCode = 0x30A0 + Math.random() * 96;
-        ctx.fillText(String.fromCharCode(charCode), x, y);
-
-        // update posisi dengan kecepatan random
-        drops[i].y += drops[i].speed;
-        // jika melewati bawah, reset ke atas secara acak
-        if (drops[i].y * fontSize > canvas.height) {
-          drops[i].y = -Math.random() * 20;
+        const y = drop.y * fontSize;
+        ctx.fillText(String.fromCharCode(0x30A0 + Math.random() * 96), x, y);
+        drop.y += drop.speed;
+        if (drop.y * fontSize > matrixCanvas.height) {
+          drop.y = -Math.random() * 20;
         }
-      }
+      });
     }
 
     startButton.addEventListener('click', () => {
       backgroundMusic.play();
-      vcard.style.display = 'none';
-      countdown.style.display = 'block';
+      vcard.style.display        = 'none';
+      countdown.style.display    = 'block';
+      progressContainer.style.display = 'block';
       initMatrix();
-      matrixAnimation = setInterval(drawMatrix, 50);
+      matrixInterval = setInterval(drawMatrix, 50);
 
-      countdownInterval = setInterval(() => {
-        countdownTime--;
-        countdown.innerText = countdownTime;
-        if (countdownTime <= 0) {
-          clearInterval(countdownInterval);
-          clearInterval(matrixAnimation);
-          ctx.clearRect(0,0,canvas.width,canvas.height);
-          countdown.style.display = 'none';
+      // Persentase 1→100 selama ~10 detik
+      let percent = 1;
+      countdown.textContent = percent + '%';
+      percentInterval = setInterval(() => {
+        percent++;
+        countdown.textContent     = percent + '%';
+        progressBar.style.width   = percent + '%';
+        if (percent >= 100) {
+          clearInterval(percentInterval);
+          clearInterval(matrixInterval);
+          animationRunning = false;
+          ctx.clearRect(0,0,matrixCanvas.width,matrixCanvas.height);
+          countdown.style.display       = 'none';
+          progressContainer.style.display = 'none';
           backgroundImage.style.display = 'block';
         }
-      }, 1000);
+      }, 100);
     });
 
-    window.addEventListener('resize', () => {
-      initMatrix();
-    });
+    window.addEventListener('resize', initMatrix);
   </script>
 
 </body>
