@@ -1,176 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>villain hack</title>
+  <meta charset="UTF-8">
+  <title>Villain Hack Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body {
+    /* Basic Reset */
+    body, html {
       margin: 0;
       padding: 0;
-      background: black;
       overflow: hidden;
+      background: black;
       font-family: Arial, sans-serif;
-      color: white;
     }
-
-    #vcard {
+    
+    /* Matrix Rain */
+    canvas {
       position: absolute;
-      top: 40%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: black;
+    }
+    
+    /* Loading Section */
+    .loading-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 30px;
+      background: transparent;
+      border: 2px solid red;
+      box-shadow: 0 0 15px red;
+      overflow: hidden;
+      z-index: 2;
+    }
+    
+    .loading-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #ff0000, #ff5555, #ff0000);
+      animation: loading 30s linear forwards;
+    }
+    
+    @keyframes loading {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    
+    .loading-text {
+      position: absolute;
+      width: 100%;
+      top: calc(50% + 40px);
+      text-align: center;
+      font-size: 24px;
+      color: red;
+      text-shadow: 0 0 5px red;
+      z-index: 2;
+    }
+    
+    /* Start Card */
+    .start-card {
+      position: absolute;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
-      z-index: 10;
+      z-index: 3;
+      display: none;
     }
 
-    #startButton {
-      margin-top: 15px;
-      padding: 12px 24px;
+    .start-card p {
+      font-size: 20px;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .start-button {
+      padding: 10px 20px;
+      background: transparent;
+      color: white;
+      border: 2px solid red;
+      box-shadow: 0 0 10px red;
       font-size: 18px;
-      border: none;
-      border-radius: 30px;
-      background: white;
-      color: black;
       cursor: pointer;
     }
-
-    #matrixCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    #progressWrapper {
-      position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 40px;
-      background: transparent;
-      border-radius: 30px;
-      padding: 10px;
-    }
-
-    #progressImage {
-      width: 100%;
-      height: 100%;
-      background: url('https://files.catbox.moe/ja69nh.jpg');
-      background-size: cover;
-      border-radius: 30px;
-      padding: 5px;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #progressFill {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      background: linear-gradient(to right, red, transparent);
-      border-radius: 30px;
-      transition: width 0.2s ease-out;
-    }
-
-    #percentText {
+    
+    /* After loading background */
+    .background-after {
       position: absolute;
       width: 100%;
-      text-align: center;
-      top: 50%;
-      transform: translateY(-50%);
-      color: white;
-      font-weight: bold;
+      height: 100%;
+      background: url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center/cover;
+      opacity: 0;
+      transition: opacity 3s ease;
+      z-index: 0;
     }
   </style>
 </head>
 <body>
-  <div id="vcard">
-    <div>lanjutkan ke website ༒⃟⸸⸸⸸⟬villain host⟭⸸⸸⸸༒⃟</div>
-    <button id="startButton">Start</button>
-  </div>
 
-  <canvas id="matrixCanvas"></canvas>
+<canvas id="matrixCanvas"></canvas>
 
-  <div id="progressWrapper" style="display: none;">
-    <div id="progressImage">
-      <div id="progressFill" style="width: 0%;"></div>
-      <div id="percentText">1%</div>
-    </div>
-  </div>
+<div class="loading-container" id="loadingContainer">
+  <div class="loading-bar" id="loadingBar"></div>
+</div>
+<div class="loading-text" id="loadingText">1%</div>
 
-  <audio id="bgm" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
+<div class="start-card" id="startCard">
+  <p>SELAMAT DATANG DI WEB VILLAIN HOSTING</p>
+  <button class="start-button" onclick="startWebsite()">Start</button>
+</div>
 
-  <script>
-    const canvas = document.getElementById("matrixCanvas");
-    const ctx = canvas.getContext("2d");
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+<div class="background-after" id="backgroundAfter"></div>
 
-    const letters = "アァイゥエオカキクケコサシスセソタチツテトナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const fontSize = 14;
-    const columns = Math.floor(width / fontSize);
-    const drops = Array(columns).fill(1);
+<audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
 
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px monospace";
+<script>
+/* Matrix Rain */
+var c = document.getElementById("matrixCanvas");
+var ctx = c.getContext("2d");
 
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
+c.height = window.innerHeight;
+c.width = window.innerWidth;
+
+var matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+matrix = matrix.split("");
+
+var font_size = 16;
+var columns = c.width / font_size;
+var drops = [];
+for(var x = 0; x < columns; x++)
+  drops[x] = Math.random() * c.height;
+
+function draw() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+  ctx.fillRect(0, 0, c.width, c.height);
+
+  ctx.fillStyle = "#0F0";
+  ctx.font = font_size + "px arial";
+  for(var i = 0; i < drops.length; i++) {
+    var text = matrix[Math.floor(Math.random() * matrix.length)];
+    ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+    if (drops[i] * font_size > c.height && Math.random() > 0.975)
+      drops[i] = 0;
+
+    drops[i]++;
+  }
+}
+setInterval(draw, 35);
+
+/* Loading Percentage */
+let loadingText = document.getElementById('loadingText');
+let percentage = 1;
+let interval = setInterval(() => {
+    percentage++;
+    loadingText.textContent = percentage + "%";
+
+    if (percentage >= 100) {
+        clearInterval(interval);
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('loadingText').style.display = 'none';
+        document.getElementById('startCard').style.display = 'block';
     }
+}, 300);
 
-    let interval = null;
+/* Start Website */
+function startWebsite() {
+  document.getElementById('startCard').style.display = 'none';
+  document.getElementById('backgroundAfter').style.opacity = '1';
+  document.getElementById('backgroundMusic').play();
+}
+</script>
 
-    function startMatrix() {
-      interval = setInterval(drawMatrix, 33);
-    }
-
-    function stopMatrix() {
-      clearInterval(interval);
-    }
-
-    const startButton = document.getElementById("startButton");
-    const vcard = document.getElementById("vcard");
-    const bgm = document.getElementById("bgm");
-    const progressWrapper = document.getElementById("progressWrapper");
-    const progressFill = document.getElementById("progressFill");
-    const percentText = document.getElementById("percentText");
-
-    startButton.addEventListener("click", () => {
-      vcard.style.display = "none";
-      bgm.play();
-      startMatrix();
-      progressWrapper.style.display = "block";
-      let percent = 1;
-      let duration = 30 * 1000;
-      let step = duration / 100;
-
-      let loading = setInterval(() => {
-        percent++;
-        progressFill.style.width = percent + "%";
-        percentText.textContent = percent + "%";
-        if (percent >= 100) {
-          clearInterval(loading);
-          stopMatrix();
-          document.body.style.background = `url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center / cover`;
-          document.getElementById("matrixCanvas").style.display = "none";
-          progressWrapper.style.display = "none";
-        }
-      }, step);
-    });
-  </script>
 </body>
 </html>
