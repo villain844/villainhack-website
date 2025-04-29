@@ -2,305 +2,147 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Villain Hack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Villain Hack Website</title>
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
-      background: black;
       overflow: hidden;
-      height: 100%;
-      font-family: 'Courier New', monospace;
-      color: white;
-      text-align: center;
-    }
-
-    #canvas {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
       background: black;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff00;
+      height: 100%;
     }
-
     #vcard {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border: 2px solid red;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border: 2px solid #00ff00;
       border-radius: 10px;
-      z-index: 2;
+      box-shadow: 0 0 20px #00ff00;
+      font-family: Arial, sans-serif; /* <- FONT NORMAL */
     }
-
-    #vcard h1 {
-      font-size: 20px;
-      margin-bottom: 20px;
-    }
-
     #startButton {
-      padding: 15px 30px;
-      font-size: 18px;
-      border: 2px solid white;
-      background-color: black;
-      color: white;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 20px;
+      background: black;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      border-radius: 5px;
       cursor: pointer;
-      border-radius: 10px;
       transition: 0.3s;
     }
-
     #startButton:hover {
-      background-color: red;
+      background: #00ff00;
       color: black;
     }
-
     #countdown {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 50px;
+      font-size: 80px;
       color: red;
-      font-weight: bold;
-      text-shadow: 0 0 10px red;
-      z-index: 2;
       display: none;
+      text-shadow: 0 0 10px red, 0 0 20px red;
     }
-  </style>
-</head>
-
-<body>
-
-<canvas id="canvas"></canvas>
-
-<div id="vcard">
-  <h1>𝐥𝐚𝐧𝐣𝐮𝐭𝐤𝐚𝐧 𝐤𝐞 𝐰𝐞𝐛𝐬𝐢𝐭𝐞 ༒⃟⸸⸸⸸⟬v͟͞i͟͞l͟͞l͟͞a͟͞i͟͞n͟͞ ͟͞h͟͞o͟͞s͟͞t͟͞⟭⸸⸸⸸༒⃟</h1>
-  <button id="startButton">Start</button>
-</div>
-
-<div id="countdown"></div>
-
-<audio id="music" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
-
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
-
-const letters = 'アァイィウヴエカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const fontSize = 16;
-const columns = canvas.width / fontSize;
-const drops = Array.from({length: columns}, () => 1);
-
-let animationRunning = true;
-
-function draw() {
-  if (animationRunning) {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#0F0';
-    ctx.font = fontSize + 'px monospace';
-
-    for (let i = 0; i < drops.length; i++) {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-
-      drops[i]++;
-    }
-    requestAnimationFrame(draw);
-  }
-}
-
-draw();
-
-const vcard = document.getElementById('vcard');
-const startButton = document.getElementById('startButton');
-const countdown = document.getElementById('countdown');
-const music = document.getElementById('music');
-
-startButton.addEventListener('click', () => {
-  music.play();
-  vcard.style.display = 'none';
-  countdown.style.display = 'block';
-  let timeLeft = 10;
-
-  const timer = setInterval(() => {
-    countdown.innerHTML = timeLeft;
-    timeLeft--;
-    if (timeLeft < 0) {
-      clearInterval(timer);
-      countdown.style.display = 'none';
-      animationRunning = false;
-      changeBackground();
-    }
-  }, 1000);
-});
-
-function changeBackground() {
-  canvas.style.background = 'url(https://files.catbox.moe/ja69nh.jpg) no-repeat center center/cover';
-}
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Villain Hack</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      overflow: hidden;
-      height: 100%;
-      font-family: 'Courier New', monospace;
-      color: white;
-      text-align: center;
-    }
-
-    #canvas {
+    #matrixCanvas {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
+    }
+    #backgroundImage {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1;
-      background: black;
-    }
-
-    #vcard {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border: 2px solid red;
-      border-radius: 10px;
-      z-index: 2;
-    }
-
-    #vcard h1 {
-      font-size: 20px;
-      margin-bottom: 20px;
-    }
-
-    #startButton {
-      padding: 15px 30px;
-      font-size: 18px;
-      border: 2px solid white;
-      background-color: black;
-      color: white;
-      cursor: pointer;
-      border-radius: 10px;
-      transition: 0.3s;
-    }
-
-    #startButton:hover {
-      background-color: red;
-      color: black;
-    }
-
-    #countdown {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 50px;
-      color: red;
-      font-weight: bold;
-      text-shadow: 0 0 10px red;
-      z-index: 2;
+      object-fit: cover;
       display: none;
+      z-index: -1;
     }
   </style>
 </head>
-
 <body>
 
-<canvas id="canvas"></canvas>
-
 <div id="vcard">
-  <h1>𝐥𝐚𝐧𝐣𝐮𝐭𝐤𝐚𝐧 𝐤𝐞 𝐰𝐞𝐛𝐬𝐢𝐭𝐞 ༒⃟⸸⸸⸸⟬v͟͞i͟͞l͟͞l͟͞a͟͞i͟͞n͟͞ ͟͞h͟͞o͟͞s͟͞t͟͞⟭⸸⸸⸸༒⃟</h1>
+  <div style="font-size: 24px; margin-bottom: 10px;">
+    Lanjutkan ke Website Villain Host
+  </div>
   <button id="startButton">Start</button>
 </div>
 
-<div id="countdown"></div>
+<canvas id="matrixCanvas"></canvas>
+<div id="countdown">10</div>
+<img id="backgroundImage" src="https://files.catbox.moe/ja69nh.jpg">
 
-<audio id="music" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
+<audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3"></audio>
 
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
+  const startButton = document.getElementById('startButton');
+  const vcard = document.getElementById('vcard');
+  const countdown = document.getElementById('countdown');
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  const backgroundMusic = document.getElementById('backgroundMusic');
+  const backgroundImage = document.getElementById('backgroundImage');
 
-const letters = 'アァイィウヴエカガキギクグケゲコゴサザシジスズセゼソゾタダチッヂヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const fontSize = 16;
-const columns = canvas.width / fontSize;
-const drops = Array.from({length: columns}, () => 1);
+  let countdownTime = 10;
+  let matrixInterval;
+  let countdownInterval;
+  let animationRunning = true;
 
-let animationRunning = true;
+  function initMatrix() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const fontSize = 14;
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
+  }
 
-function draw() {
-  if (animationRunning) {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  function drawMatrix() {
+    if (!animationRunning) return;
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#0F0';
-    ctx.font = fontSize + 'px monospace';
-
+    ctx.fillStyle = "#0F0";
+    ctx.font = "14px monospace";
     for (let i = 0; i < drops.length; i++) {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+      ctx.fillText(text, i * 14, drops[i] * 14);
+      if (drops[i] * 14 > canvas.height && Math.random() > 0.975) {
         drops[i] = 0;
       }
-
       drops[i]++;
     }
-    requestAnimationFrame(draw);
   }
-}
 
-draw();
+  startButton.addEventListener('click', () => {
+    backgroundMusic.play();
+    vcard.style.display = 'none';
+    countdown.style.display = 'block';
+    initMatrix();
+    matrixInterval = setInterval(drawMatrix, 50);
+    countdownInterval = setInterval(() => {
+      countdownTime--;
+      countdown.innerText = countdownTime;
+      if (countdownTime <= 0) {
+        clearInterval(countdownInterval);
+        clearInterval(matrixInterval);
+        animationRunning = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        backgroundImage.style.display = 'block';
+        countdown.style.display = 'none';
+      }
+    }, 1000);
+  });
 
-const vcard = document.getElementById('vcard');
-const startButton = document.getElementById('startButton');
-const countdown = document.getElementById('countdown');
-const music = document.getElementById('music');
-
-startButton.addEventListener('click', () => {
-  music.play();
-  vcard.style.display = 'none';
-  countdown.style.display = 'block';
-  let timeLeft = 10;
-
-  const timer = setInterval(() => {
-    countdown.innerHTML = timeLeft;
-    timeLeft--;
-    if (timeLeft < 0) {
-      clearInterval(timer);
-      countdown.style.display = 'none';
-      animationRunning = false;
-      changeBackground();
-    }
-  }, 1000);
-});
-
-function changeBackground() {
-  canvas.style.background = 'url(https://files.catbox.moe/ja69nh.jpg) no-repeat center center/cover';
-}
+  window.addEventListener('resize', initMatrix);
 </script>
 
 </body>
