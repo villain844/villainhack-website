@@ -5,11 +5,11 @@
   <title>Villain Hack Website</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
-      background: black;
       overflow: hidden;
+      background: black;
       font-family: Arial, sans-serif;
     }
 
@@ -17,39 +17,40 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
+      z-index: 1;
     }
 
-    /* VCard */
     .vcard {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 2;
+      background: rgba(0,0,0,0.7);
+      padding: 20px 30px;
+      border: 2px solid red;
+      box-shadow: 0 0 15px red;
       text-align: center;
       color: white;
+      z-index: 3;
     }
 
     .vcard p {
-      font-size: 20px;
       margin-bottom: 20px;
+      font-size: 18px;
     }
 
     .start-btn {
-      padding: 10px 20px;
+      padding: 10px 25px;
+      font-size: 18px;
       background: transparent;
       border: 2px solid red;
       color: white;
-      font-size: 18px;
       cursor: pointer;
       box-shadow: 0 0 10px red;
     }
 
-    /* Loading Bar */
     .loading-container {
+      display: none;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -58,60 +59,39 @@
       height: 30px;
       background: transparent;
       border: 2px solid red;
-      box-shadow: 0 0 15px red;
+      box-shadow: 0 0 20px red;
       overflow: hidden;
-      z-index: 3;
-      display: none;
+      z-index: 2;
     }
 
-    .loading-bar {
+    .aura {
+      position: absolute;
+      top: 0;
+      left: 0;
       height: 100%;
       width: 0%;
-      background: linear-gradient(to right, #ff0000, #ff5555, #ff0000);
-      animation: loading 30s linear forwards;
+      background: radial-gradient(circle at center, red, transparent);
+      animation: auraEffect 30s linear forwards;
+      z-index: 2;
     }
 
-    @keyframes loading {
-      0% { width: 0%; }
-      100% { width: 100%; }
+    @keyframes auraEffect {
+      0% { width: 0%; opacity: 1; }
+      100% { width: 100%; opacity: 0; }
     }
 
     .loading-text {
+      display: none;
       position: absolute;
-      width: 100%;
       top: calc(50% + 40px);
-      text-align: center;
-      font-size: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 22px;
       color: red;
       text-shadow: 0 0 5px red;
-      z-index: 3;
-      display: none;
-    }
-
-    /* Aura effect */
-    .aura-effect {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 320px;
-      height: 50px;
-      border-radius: 10px;
       z-index: 2;
-      pointer-events: none;
-      animation: auraPulse 1.5s infinite ease-in-out;
-      background: radial-gradient(circle, rgba(255,0,0,0.4) 0%, rgba(255,0,0,0) 70%);
-      filter: blur(10px);
-      display: none;
     }
 
-    @keyframes auraPulse {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-    }
-
-    /* After loading background */
     .background-after {
       position: absolute;
       width: 100%;
@@ -119,86 +99,77 @@
       background: url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center/cover;
       opacity: 0;
       transition: opacity 3s ease;
-      z-index: 1;
+      z-index: 0;
     }
-
   </style>
 </head>
 <body>
 
 <canvas id="matrixCanvas"></canvas>
 
-<!-- VCard -->
 <div class="vcard" id="vcard">
   <p>SELAMAT DATANG DI WEB ➩ 𓆩⟬villain host⟭𓆪</p>
   <button class="start-btn" onclick="startLoading()">Start</button>
 </div>
 
-<!-- Loading Aura & Bar -->
-<div class="aura-effect" id="auraEffect"></div>
 <div class="loading-container" id="loadingContainer">
-  <div class="loading-bar" id="loadingBar"></div>
+  <div class="aura" id="auraEffect"></div>
 </div>
 <div class="loading-text" id="loadingText">1%</div>
 
-<!-- Background After Loading -->
 <div class="background-after" id="backgroundAfter"></div>
-
 <audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
 
 <script>
-/* Matrix Rain */
-const canvas = document.getElementById("matrixCanvas");
-const ctx = canvas.getContext("2d");
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
+  // Matrix Rain
+  const c = document.getElementById("matrixCanvas");
+  const ctx = c.getContext("2d");
+  c.height = window.innerHeight;
+  c.width = window.innerWidth;
 
-const matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
-const font_size = 16;
-const columns = canvas.width / font_size;
-let drops = [];
-for (let x = 0; x < columns; x++) {
-  drops[x] = Math.random() * -100; // acak agar tidak bersamaan
-}
+  const matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
+  const font_size = 16;
+  const columns = c.width / font_size;
+  const drops = [];
 
-function drawMatrix() {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#0F0";
-  ctx.font = font_size + "px Arial";
-  for (let i = 0; i < drops.length; i++) {
-    const text = matrix[Math.floor(Math.random() * matrix.length)];
-    ctx.fillText(text, i * font_size, drops[i] * font_size);
-    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
-      drops[i] = 0;
+  for (let x = 0; x < columns; x++) drops[x] = Math.random() * c.height;
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.fillStyle = "#0F0";
+    ctx.font = font_size + "px arial";
+    for (let i = 0; i < drops.length; i++) {
+      const text = matrix[Math.floor(Math.random() * matrix.length)];
+      ctx.fillText(text, i * font_size, drops[i] * font_size);
+      if (drops[i] * font_size > c.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
     }
-    drops[i]++;
   }
-}
-setInterval(drawMatrix, 35);
+  setInterval(draw, 35);
 
-/* Start Loading */
-function startLoading() {
-  document.getElementById('vcard').style.display = 'none';
-  document.getElementById('loadingContainer').style.display = 'block';
-  document.getElementById('loadingText').style.display = 'block';
-  document.getElementById('auraEffect').style.display = 'block';
+  // Loading + Aura + Transition
+  function startLoading() {
+    document.getElementById('vcard').style.display = 'none';
+    document.getElementById('loadingContainer').style.display = 'block';
+    document.getElementById('loadingText').style.display = 'block';
+    document.getElementById('backgroundMusic').play();
 
-  let percentage = 1;
-  const loadingText = document.getElementById('loadingText');
-  const interval = setInterval(() => {
-    percentage++;
-    loadingText.textContent = percentage + "%";
-    if (percentage >= 100) {
-      clearInterval(interval);
-      document.getElementById('loadingContainer').style.display = 'none';
-      document.getElementById('loadingText').style.display = 'none';
-      document.getElementById('auraEffect').style.display = 'none';
-      document.getElementById('backgroundAfter').style.opacity = '1';
-      document.getElementById('backgroundMusic').play();
-    }
-  }, 300);
-}
+    let percent = 1;
+    const loadingText = document.getElementById('loadingText');
+
+    const interval = setInterval(() => {
+      percent++;
+      loadingText.textContent = percent + "%";
+
+      if (percent >= 100) {
+        clearInterval(interval);
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('loadingText').style.display = 'none';
+        document.getElementById('backgroundAfter').style.opacity = 1;
+      }
+    }, 300); // 100 * 300ms = 30s
+  }
 </script>
 
 </body>
