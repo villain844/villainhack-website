@@ -1,80 +1,101 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Villain Host</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html {
+      width: 100%;
+      height: 100%;
       background: black;
       font-family: Arial, sans-serif;
       overflow: hidden;
-    }.vcard {
+    }canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.centered {
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 24px;
-  color: red;
-  text-shadow: 0 0 8px red;
-  z-index: 10;
+  text-align: center;
+  z-index: 2;
+}
+
+.start-card {
+  z-index: 3;
+}
+
+.start-button, .music-button, .platform-button {
+  margin: 10px auto;
+  padding: 10px 30px;
+  font-size: 18px;
+  color: white;
+  background: transparent;
+  border: 2px solid red;
+  border-radius: 8px;
+  box-shadow: 0 0 10px red;
+  cursor: pointer;
+  display: block;
 }
 
 .loading-container {
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   width: 300px;
-  height: 40px;
-  border-radius: 40px;
-  border: 2px solid white;
-  box-shadow: 0 0 15px red, 0 0 40px red inset;
+  height: 30px;
+  background: transparent;
+  border: 2px solid red;
+  box-shadow: 0 0 15px red;
   overflow: hidden;
-  z-index: 9;
-  background: black;
+  margin: auto;
 }
 
 .loading-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(to right, red, #ff4444, red);
-  border-radius: 40px;
-  animation: fill 30s linear forwards;
+  background: linear-gradient(to right, #ff0000, #ff5555, #ff0000);
+  animation: loading 30s linear forwards;
 }
 
-@keyframes fill {
+@keyframes loading {
   0% { width: 0%; }
   100% { width: 100%; }
 }
 
 .loading-text {
-  position: absolute;
-  top: 63%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 20px;
   color: red;
+  margin-top: 10px;
+  font-size: 24px;
   text-shadow: 0 0 5px red;
-  z-index: 10;
 }
 
-.start-button {
-  display: none;
+.aura-container {
+  position: relative;
+  width: 300px;
+  height: 100px;
+  margin: auto;
+}
+
+.aura {
   position: absolute;
-  top: 70%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 40px;
-  border-radius: 40px;
-  border: 2px solid white;
-  background: black;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  box-shadow: 0 0 15px red;
-  z-index: 11;
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+  animation: moveAura 3s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes moveAura {
+  0% { transform: scale(0.5); opacity: 0.5; }
+  100% { transform: translate(145px, 20px) scale(0); opacity: 0; }
 }
 
 .background-after {
@@ -83,69 +104,92 @@
   height: 100%;
   background: url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center/cover;
   opacity: 0;
-  transition: opacity 2s ease;
-  z-index: 0;
+  transition: opacity 3s ease;
+  z-index: 1;
 }
 
 .platform-buttons {
-  display: none;
-  flex-direction: column;
-  align-items: center;
   position: absolute;
-  top: 20%;
+  top: 60%;
   left: 50%;
   transform: translateX(-50%);
-  gap: 20px;
-  z-index: 12;
-}
-
-.platform-buttons a {
-  text-decoration: none;
-  color: white;
-  font-size: 18px;
-  padding: 12px 50px;
-  border: 2px solid white;
-  border-radius: 40px;
-  background: black;
-  box-shadow: 0 0 15px red;
-  transition: 0.3s;
-}
-
-.platform-buttons a:hover {
-  transform: scale(1.05);
+  display: none;
+  z-index: 4;
 }
 
   </style>
 </head>
-<body>
-<audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
-<div class="background-after" id="backgroundAfter"></div>
-<div class="vcard" id="vcard">SELAMAT DATANG DI WEB ➔ 𒏩⍬villain host⍭𒏪</div>
-<div class="loading-container" id="loadingContainer">
-  <div class="loading-bar" id="loadingBar"></div>
-</div>
-<div class="loading-text" id="loadingText">1%</div>
-<button class="start-button" id="startBtn" onclick="startSite()">START</button>
-<div class="platform-buttons" id="platforms">
-  <a href="https://wa.me/6285134380708" target="_blank">WhatsApp 1</a>
-  <a href="https://wa.me/6281246041489" target="_blank">WhatsApp 2</a>
-  <a href="https://wa.me/6289505317821" target="_blank">WhatsApp 3</a>
-  <a href="https://t.me/@VILLAINHOST" target="_blank">Telegram</a>
-</div>
-<script>
-  let percentage = 1;
-  let text = document.getElementById("loadingText");
-  let interval = setInterval(() => {
-    percentage++;
-    text.innerText = percentage + "%";
-    if (percentage >= 100) {
-      clearInterval(interval);
-      document.getElementById("loadingContainer").style.display = "none";
-      text.style.display = "none";
-      document.getElementById("vcard").style.display = "none";
-      document.getElementById("startBtn").style.display = "block";
-    }
-  }, 300);function startSite() { document.getElementById("startBtn").style.display = "none"; document.getElementById("backgroundAfter").style.opacity = "1"; document.getElementById("platforms").style.display = "flex"; document.getElementById("backgroundMusic").play(); } </script>
+<body><canvas id="matrixCanvas"></canvas>
 
-</body>
+<div class="centered start-card" id="startCard">
+  <p style="color:white; font-size:18px;">SELAMAT DATANG DI WEB ➔ 🕣⍬esvillain host⍬🕪</p>
+  <button class="start-button" onclick="startLoading()">Start</button>
+</div><div class="centered loading-card" id="loadingCard" style="display:none;">
+  <div class="aura-container">
+    <div class="loading-container">
+      <div class="loading-bar" id="loadingBar"></div>
+    </div>
+    <div class="aura" style="top:0; left:0;"></div>
+    <div class="aura" style="top:0; right:0; animation-delay:0.5s;"></div>
+    <div class="aura" style="bottom:0; left:0; animation-delay:1s;"></div>
+    <div class="aura" style="bottom:0; right:0; animation-delay:1.5s;"></div>
+    <div class="aura" style="top:50%; left:-10px; animation-delay:2s;"></div>
+    <div class="aura" style="top:50%; right:-10px; animation-delay:2.5s;"></div>
+  </div>
+  <div class="loading-text" id="loadingText">1%</div>
+</div><div class="centered" id="musicCard" style="display:none;">
+  <button class="music-button" onclick="startMusic()">Lanjutkan untuk Memutar Musik</button>
+</div><div class="platform-buttons" id="platforms">
+  <a href="https://wa.me/6285134380708" class="platform-button">WhatsApp 1</a>
+  <a href="https://wa.me/6281246041489" class="platform-button">WhatsApp 2</a>
+  <a href="https://wa.me/6289505317821" class="platform-button">WhatsApp 3</a>
+  <a href="https://t.me/@VILLAINHOST" class="platform-button">Telegram</a>
+</div><div class="background-after" id="backgroundAfter"></div>
+<audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3"></audio><script>
+  // Matrix rain
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  const matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789".split("");
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = Array.from({ length: columns }).map(() => Math.random() * canvas.height);
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0F0";
+    ctx.font = fontSize + "px Arial";
+    drops.forEach((y, i) => {
+      const text = matrix[Math.floor(Math.random() * matrix.length)];
+      ctx.fillText(text, i * fontSize, y * fontSize);
+      if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+  }
+  setInterval(drawMatrix, 33);
+
+  function startLoading() {
+    document.getElementById('startCard').style.display = 'none';
+    document.getElementById('loadingCard').style.display = 'block';
+    let percent = 1;
+    const loadingText = document.getElementById('loadingText');
+    const interval = setInterval(() => {
+      percent++;
+      loadingText.textContent = percent + "%";
+      if (percent >= 100) {
+        clearInterval(interval);
+        document.getElementById('loadingCard').style.display = 'none';
+        document.getElementById('musicCard').style.display = 'block';
+        document.getElementById('backgroundAfter').style.opacity = '1';
+      }
+    }, 300);
+  }
+
+  function startMusic() {
+    document.getElementById('musicCard').style.display = 'none';
+    document.getElementById('backgroundMusic').play();
+    document.getElementById('platforms').style.display = 'block';
+  }
+</script></body>
 </html>
