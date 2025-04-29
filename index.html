@@ -1,209 +1,210 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Villain Hack Website</title>
+  <meta charset="UTF-8">
+  <title>Villain Host Website</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: Arial, sans-serif;
       background: black;
-    }
+      font-family: Arial, sans-serif;
+    }canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: black;
+}
 
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
+.start-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+}
 
-    .vcard {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      text-align: center;
-      z-index: 10;
-    }
+.start-card p {
+  font-size: 18px;
+  color: white;
+  margin-bottom: 20px;
+}
 
-    .vcard p {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
+.start-button {
+  padding: 10px 20px;
+  background: transparent;
+  color: white;
+  border: 2px solid red;
+  box-shadow: 0 0 10px red;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    .start-btn {
-      padding: 10px 20px;
-      font-size: 16px;
-      background: transparent;
-      border: 2px solid red;
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 0 10px red;
-    }
+.loading-container {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 30px;
+  background: transparent;
+  border: 2px solid red;
+  box-shadow: 0 0 15px red;
+  overflow: hidden;
+  z-index: 2;
+}
 
-    .loading-container {
-      display: none;
-      position: absolute;
-      top: 55%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      height: 30px;
-      background: transparent;
-      border: 2px solid red;
-      box-shadow: 0 0 15px red;
-      overflow: hidden;
-      z-index: 9;
-    }
+.loading-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #ff0000, #ff5555, #ff0000);
+}
 
-    .loading-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(to right, red, darkred);
-    }
+.loading-text {
+  display: none;
+  position: absolute;
+  width: 100%;
+  top: calc(50% + 40px);
+  text-align: center;
+  font-size: 24px;
+  color: red;
+  text-shadow: 0 0 5px red;
+  z-index: 2;
+}
 
-    .loading-text {
-      position: absolute;
-      top: calc(55% + 40px);
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 20px;
-      color: red;
-      z-index: 9;
-      text-shadow: 0 0 5px red;
-    }
+.background-after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center/cover;
+  opacity: 0;
+  transition: opacity 3s ease;
+  z-index: 0;
+}
 
-    .after-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('https://files.catbox.moe/ja69nh.jpg') center center / cover no-repeat;
-      opacity: 0;
-      transition: opacity 2s ease-in;
-      z-index: 1;
-    }
+.platform-buttons {
+  display: none;
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  z-index: 11;
+  justify-content: center;
+}
 
-    .platform-buttons {
-      display: none;
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      z-index: 11;
-    }
+.platform-card {
+  text-align: center;
+  border: 2px solid red;
+  padding: 10px 15px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 0 10px red;
+  transition: 0.3s;
+}
 
-    .platform-buttons a {
-      text-decoration: none;
-      padding: 10px 20px;
-      background: rgba(255, 0, 0, 0.1);
-      border: 2px solid red;
-      color: white;
-      font-size: 14px;
-      border-radius: 6px;
-      box-shadow: 0 0 10px red;
-      transition: 0.3s;
-    }
+.platform-card:hover {
+  background: red;
+  color: black;
+}
 
-    .platform-buttons a:hover {
-      background: red;
-      color: black;
-    }
+.platform-card img {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+.platform-card span {
+  display: block;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
   </style>
 </head>
 <body>
+  <canvas id="matrixCanvas"></canvas>  <div class="start-card" id="startCard">
+    <p>SELAMAT DATANG DI WEB ➔ 📙⍬ₖvillain hostₕ⍭</p>
+    <button class="start-button" onclick="startLoading()">Start</button>
+  </div>  <div class="loading-container" id="loadingContainer">
+    <div class="loading-bar" id="loadingBar"></div>
+  </div>
+  <div class="loading-text" id="loadingText">1%</div>  <div class="background-after" id="backgroundAfter"></div>  <div class="platform-buttons" id="platforms">
+    <a class="platform-card" href="https://wa.me/6285134380708" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
+      <span>WhatsApp 1</span>
+    </a>
+    <a class="platform-card" href="https://wa.me/6281246041489" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
+      <span>WhatsApp 2</span>
+    </a>
+    <a class="platform-card" href="https://wa.me/6289505317821" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
+      <span>WhatsApp 3</span>
+    </a>
+    <a class="platform-card" href="https://t.me/@VILLAINHOST" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram">
+      <span>Telegram</span>
+    </a>
+  </div><audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
 
-<canvas id="matrix"></canvas>
+  <script>
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
 
-<div class="vcard" id="vcard">
-  <p>SELAMAT DATANG DI WEB ➩ 𓆩⟬villain host⟭𓆪</p>
-  <button class="start-btn" onclick="startSite()">Start</button>
-</div>
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
-<div class="loading-container" id="loadingContainer">
-  <div class="loading-bar" id="loadingBar"></div>
-</div>
-<div class="loading-text" id="loadingText">1%</div>
+    const matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}`".split("");
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+    for(let i = 0; i < columns; i++) drops[i] = Math.random() * canvas.height;
 
-<div class="after-bg" id="afterBg"></div>
-
-<div class="platform-buttons" id="platforms">
-  <a href="https://wa.me/6285134380708" target="_blank">WhatsApp 1</a>
-  <a href="https://wa.me/6281246041489" target="_blank">WhatsApp 2</a>
-  <a href="https://wa.me/6289505317821" target="_blank">WhatsApp 3</a>
-  <a href="https://t.me/@VILLAINHOST" target="_blank">Telegram</a>
-</div>
-
-<audio id="bgMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
-
-<script>
-  // Matrix Rain
-  const c = document.getElementById("matrix");
-  const ctx = c.getContext("2d");
-
-  c.height = window.innerHeight;
-  c.width = window.innerWidth;
-
-  const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%".split("");
-  const fontSize = 14;
-  const columns = c.width / fontSize;
-  const drops = Array.from({ length: columns }, () => Math.random() * c.height);
-
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, c.width, c.height);
-
-    ctx.fillStyle = "#0F0";
-    ctx.font = fontSize + "px monospace";
-
-    drops.forEach((y, i) => {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      const x = i * fontSize;
-      ctx.fillText(text, x, y);
-
-      if (y > c.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      } else {
-        drops[i] = y + fontSize;
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px arial";
+      for(let i = 0; i < drops.length; i++) {
+        const text = matrix[Math.floor(Math.random() * matrix.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
       }
-    });
-  }
+    }
+    setInterval(drawMatrix, 35);
 
-  setInterval(drawMatrix, 33);
+    function startLoading() {
+      document.getElementById("startCard").style.display = "none";
+      document.getElementById("loadingContainer").style.display = "block";
+      document.getElementById("loadingText").style.display = "block";
 
-  function startSite() {
-    document.getElementById("vcard").style.display = "none";
-    document.getElementById("loadingContainer").style.display = "block";
+      let percentage = 1;
+      const interval = setInterval(() => {
+        percentage++;
+        document.getElementById("loadingText").textContent = percentage + "%";
+        document.getElementById("loadingBar").style.width = percentage + "%";
 
-    let percentage = 1;
-    const bar = document.getElementById("loadingBar");
-    const text = document.getElementById("loadingText");
-
-    const interval = setInterval(() => {
-      percentage++;
-      text.innerText = percentage + "%";
-      bar.style.width = percentage + "%";
-
-      if (percentage >= 100) {
-        clearInterval(interval);
-        document.getElementById("loadingContainer").style.display = "none";
-        text.style.display = "none";
-        document.getElementById("afterBg").style.opacity = 1;
-        document.getElementById("platforms").style.display = "flex";
-      }
-    }, 300);
-
-    document.getElementById("bgMusic").play();
-  }
-</script>
-
-</body>
+        if (percentage >= 100) {
+          clearInterval(interval);
+          document.getElementById("loadingContainer").style.display = "none";
+          document.getElementById("loadingText").style.display = "none";
+          document.getElementById("backgroundAfter").style.opacity = "1";
+          document.getElementById("platforms").style.display = "flex";
+          document.getElementById("backgroundMusic").play();
+        }
+      }, 300);
+    }
+  </script></body>
 </html>
