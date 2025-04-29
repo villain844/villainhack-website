@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Villain Hack Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body, html {
       margin: 0;
@@ -25,7 +25,7 @@
       border: 2px solid #00ff00;
       border-radius: 10px;
       box-shadow: 0 0 20px #00ff00;
-      font-family: Arial, sans-serif; /* <- FONT NORMAL */
+      font-family: Arial, sans-serif;
     }
     #startButton {
       margin-top: 20px;
@@ -56,6 +56,7 @@
       position: absolute;
       top: 0;
       left: 0;
+      z-index: 0;
     }
     #backgroundImage {
       position: absolute;
@@ -71,79 +72,94 @@
 </head>
 <body>
 
-<div id="vcard">
-  <div style="font-size: 24px; margin-bottom: 10px;">
-    Lanjutkan ke Website Villain Host
+  <div id="vcard">
+    <div style="font-size: 24px; margin-bottom: 10px;">
+      Lanjutkan ke Website Villain Host
+    </div>
+    <button id="startButton">Start</button>
   </div>
-  <button id="startButton">Start</button>
-</div>
 
-<canvas id="matrixCanvas"></canvas>
-<div id="countdown">10</div>
-<img id="backgroundImage" src="https://files.catbox.moe/ja69nh.jpg">
+  <canvas id="matrixCanvas"></canvas>
+  <div id="countdown">10</div>
+  <img id="backgroundImage" src="https://files.catbox.moe/ja69nh.jpg">
 
-<audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3"></audio>
+  <audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3"></audio>
 
-<script>
-  const startButton = document.getElementById('startButton');
-  const vcard = document.getElementById('vcard');
-  const countdown = document.getElementById('countdown');
-  const canvas = document.getElementById('matrixCanvas');
-  const ctx = canvas.getContext('2d');
-  const backgroundMusic = document.getElementById('backgroundMusic');
-  const backgroundImage = document.getElementById('backgroundImage');
+  <script>
+    const startButton     = document.getElementById('startButton');
+    const vcard           = document.getElementById('vcard');
+    const countdown       = document.getElementById('countdown');
+    const canvas          = document.getElementById('matrixCanvas');
+    const ctx             = canvas.getContext('2d');
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    const backgroundImage = document.getElementById('backgroundImage');
 
-  let countdownTime = 10;
-  let matrixInterval;
-  let countdownInterval;
-  let animationRunning = true;
+    let countdownTime = 10;
+    let matrixAnimation;
+    let countdownInterval;
 
-  function initMatrix() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const fontSize = 14;
-    columns = Math.floor(canvas.width / fontSize);
-    drops = Array(columns).fill(1);
-  }
-
-  function drawMatrix() {
-    if (!animationRunning) return;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0F0";
-    ctx.font = "14px monospace";
-    for (let i = 0; i < drops.length; i++) {
-      const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-      ctx.fillText(text, i * 14, drops[i] * 14);
-      if (drops[i] * 14 > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
+    // tiap kolom punya posisi Y dan kecepatan random
+    let drops = [];
+    function initMatrix() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const fontSize = 16;
+      const columns  = Math.floor(canvas.width / fontSize);
+      drops = [];
+      for (let i = 0; i < columns; i++) {
+        drops.push({
+          y: Math.random() * canvas.height / fontSize,
+          speed: Math.random() * 1.5 + 0.5  // kecepatan 0.5–2.0
+        });
       }
-      drops[i]++;
+      ctx.font = fontSize + 'px monospace';
     }
-  }
 
-  startButton.addEventListener('click', () => {
-    backgroundMusic.play();
-    vcard.style.display = 'none';
-    countdown.style.display = 'block';
-    initMatrix();
-    matrixInterval = setInterval(drawMatrix, 50);
-    countdownInterval = setInterval(() => {
-      countdownTime--;
-      countdown.innerText = countdownTime;
-      if (countdownTime <= 0) {
-        clearInterval(countdownInterval);
-        clearInterval(matrixInterval);
-        animationRunning = false;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        backgroundImage.style.display = 'block';
-        countdown.style.display = 'none';
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0F0';
+      const fontSize = 16;
+
+      for (let i = 0; i < drops.length; i++) {
+        const x = i * fontSize;
+        const y = drops[i].y * fontSize;
+        const charCode = 0x30A0 + Math.random() * 96;
+        ctx.fillText(String.fromCharCode(charCode), x, y);
+
+        // update posisi dengan kecepatan random
+        drops[i].y += drops[i].speed;
+        // jika melewati bawah, reset ke atas secara acak
+        if (drops[i].y * fontSize > canvas.height) {
+          drops[i].y = -Math.random() * 20;
+        }
       }
-    }, 1000);
-  });
+    }
 
-  window.addEventListener('resize', initMatrix);
-</script>
+    startButton.addEventListener('click', () => {
+      backgroundMusic.play();
+      vcard.style.display = 'none';
+      countdown.style.display = 'block';
+      initMatrix();
+      matrixAnimation = setInterval(drawMatrix, 50);
+
+      countdownInterval = setInterval(() => {
+        countdownTime--;
+        countdown.innerText = countdownTime;
+        if (countdownTime <= 0) {
+          clearInterval(countdownInterval);
+          clearInterval(matrixAnimation);
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          countdown.style.display = 'none';
+          backgroundImage.style.display = 'block';
+        }
+      }, 1000);
+    });
+
+    window.addEventListener('resize', () => {
+      initMatrix();
+    });
+  </script>
 
 </body>
 </html>
