@@ -1,81 +1,80 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Villain Host Website</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Villain Host</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       background: black;
       font-family: Arial, sans-serif;
-    }canvas {
+      overflow: hidden;
+    }.vcard {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  background: black;
-}
-
-.start-card {
-  position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
+  font-size: 24px;
+  color: red;
+  text-shadow: 0 0 8px red;
   z-index: 10;
 }
 
-.start-card p {
-  font-size: 18px;
-  color: white;
-  margin-bottom: 20px;
-}
-
-.start-button {
-  padding: 10px 20px;
-  background: transparent;
-  color: white;
-  border: 2px solid red;
-  box-shadow: 0 0 10px red;
-  font-size: 16px;
-  cursor: pointer;
-}
-
 .loading-container {
-  display: none;
   position: absolute;
-  top: 50%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 300px;
-  height: 30px;
-  background: transparent;
-  border: 2px solid red;
-  box-shadow: 0 0 15px red;
+  height: 40px;
+  border-radius: 40px;
+  border: 2px solid white;
+  box-shadow: 0 0 15px red, 0 0 40px red inset;
   overflow: hidden;
-  z-index: 2;
+  z-index: 9;
+  background: black;
 }
 
 .loading-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(to right, #ff0000, #ff5555, #ff0000);
+  background: linear-gradient(to right, red, #ff4444, red);
+  border-radius: 40px;
+  animation: fill 30s linear forwards;
+}
+
+@keyframes fill {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
 
 .loading-text {
-  display: none;
   position: absolute;
-  width: 100%;
-  top: calc(50% + 40px);
-  text-align: center;
-  font-size: 24px;
+  top: 63%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
   color: red;
   text-shadow: 0 0 5px red;
-  z-index: 2;
+  z-index: 10;
+}
+
+.start-button {
+  display: none;
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 40px;
+  border-radius: 40px;
+  border: 2px solid white;
+  background: black;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 0 15px red;
+  z-index: 11;
 }
 
 .background-after {
@@ -84,127 +83,69 @@
   height: 100%;
   background: url('https://files.catbox.moe/ja69nh.jpg') no-repeat center center/cover;
   opacity: 0;
-  transition: opacity 3s ease;
+  transition: opacity 2s ease;
   z-index: 0;
 }
 
 .platform-buttons {
   display: none;
+  flex-direction: column;
+  align-items: center;
   position: absolute;
-  bottom: 50px;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  flex-wrap: wrap;
   gap: 20px;
-  z-index: 11;
-  justify-content: center;
+  z-index: 12;
 }
 
-.platform-card {
-  text-align: center;
-  border: 2px solid red;
-  padding: 10px 15px;
-  background: rgba(255, 0, 0, 0.1);
-  border-radius: 8px;
-  box-shadow: 0 0 10px red;
+.platform-buttons a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  padding: 12px 50px;
+  border: 2px solid white;
+  border-radius: 40px;
+  background: black;
+  box-shadow: 0 0 15px red;
   transition: 0.3s;
 }
 
-.platform-card:hover {
-  background: red;
-  color: black;
-}
-
-.platform-card img {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 5px;
-}
-
-.platform-card span {
-  display: block;
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 5px;
+.platform-buttons a:hover {
+  transform: scale(1.05);
 }
 
   </style>
 </head>
 <body>
-  <canvas id="matrixCanvas"></canvas>  <div class="start-card" id="startCard">
-    <p>SELAMAT DATANG DI WEB ➔ 📙⍬ₖvillain hostₕ⍭</p>
-    <button class="start-button" onclick="startLoading()">Start</button>
-  </div>  <div class="loading-container" id="loadingContainer">
-    <div class="loading-bar" id="loadingBar"></div>
-  </div>
-  <div class="loading-text" id="loadingText">1%</div>  <div class="background-after" id="backgroundAfter"></div>  <div class="platform-buttons" id="platforms">
-    <a class="platform-card" href="https://wa.me/6285134380708" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
-      <span>WhatsApp 1</span>
-    </a>
-    <a class="platform-card" href="https://wa.me/6281246041489" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
-      <span>WhatsApp 2</span>
-    </a>
-    <a class="platform-card" href="https://wa.me/6289505317821" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
-      <span>WhatsApp 3</span>
-    </a>
-    <a class="platform-card" href="https://t.me/@VILLAINHOST" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram">
-      <span>Telegram</span>
-    </a>
-  </div><audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
-
-  <script>
-    const canvas = document.getElementById("matrixCanvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-
-    const matrix = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}`".split("");
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = [];
-    for(let i = 0; i < columns; i++) drops[i] = Math.random() * canvas.height;
-
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px arial";
-      for(let i = 0; i < drops.length; i++) {
-        const text = matrix[Math.floor(Math.random() * matrix.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
+<audio id="backgroundMusic" src="https://files.catbox.moe/crf7up.mp3" preload="auto"></audio>
+<div class="background-after" id="backgroundAfter"></div>
+<div class="vcard" id="vcard">SELAMAT DATANG DI WEB ➔ 𒏩⍬villain host⍭𒏪</div>
+<div class="loading-container" id="loadingContainer">
+  <div class="loading-bar" id="loadingBar"></div>
+</div>
+<div class="loading-text" id="loadingText">1%</div>
+<button class="start-button" id="startBtn" onclick="startSite()">START</button>
+<div class="platform-buttons" id="platforms">
+  <a href="https://wa.me/6285134380708" target="_blank">WhatsApp 1</a>
+  <a href="https://wa.me/6281246041489" target="_blank">WhatsApp 2</a>
+  <a href="https://wa.me/6289505317821" target="_blank">WhatsApp 3</a>
+  <a href="https://t.me/@VILLAINHOST" target="_blank">Telegram</a>
+</div>
+<script>
+  let percentage = 1;
+  let text = document.getElementById("loadingText");
+  let interval = setInterval(() => {
+    percentage++;
+    text.innerText = percentage + "%";
+    if (percentage >= 100) {
+      clearInterval(interval);
+      document.getElementById("loadingContainer").style.display = "none";
+      text.style.display = "none";
+      document.getElementById("vcard").style.display = "none";
+      document.getElementById("startBtn").style.display = "block";
     }
-    setInterval(drawMatrix, 35);
+  }, 300);function startSite() { document.getElementById("startBtn").style.display = "none"; document.getElementById("backgroundAfter").style.opacity = "1"; document.getElementById("platforms").style.display = "flex"; document.getElementById("backgroundMusic").play(); } </script>
 
-    function startLoading() {
-      document.getElementById("startCard").style.display = "none";
-      document.getElementById("loadingContainer").style.display = "block";
-      document.getElementById("loadingText").style.display = "block";
-
-      let percentage = 1;
-      const interval = setInterval(() => {
-        percentage++;
-        document.getElementById("loadingText").textContent = percentage + "%";
-        document.getElementById("loadingBar").style.width = percentage + "%";
-
-        if (percentage >= 100) {
-          clearInterval(interval);
-          document.getElementById("loadingContainer").style.display = "none";
-          document.getElementById("loadingText").style.display = "none";
-          document.getElementById("backgroundAfter").style.opacity = "1";
-          document.getElementById("platforms").style.display = "flex";
-          document.getElementById("backgroundMusic").play();
-        }
-      }, 300);
-    }
-  </script></body>
+</body>
 </html>
